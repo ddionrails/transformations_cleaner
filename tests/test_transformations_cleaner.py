@@ -1,3 +1,4 @@
+"""All unittests for the package."""
 import tempfile
 import typing
 import unittest
@@ -36,10 +37,11 @@ test-study,test-dataset,var11,some-concept,v34,6345,test-dataset|var11
 )
 
 
-class TestInput(unittest.TestCase):
+class TestCleaner(unittest.TestCase):
+    """ Test cleaner class functionality."""
 
-    tmp_transformations: typing.IO
-    tmp_variables: typing.IO
+    tmp_transformations: typing.IO[bytes]
+    tmp_variables: typing.IO[bytes]
 
     mocked_relations = [
         {
@@ -52,8 +54,8 @@ class TestInput(unittest.TestCase):
         },
     ]
 
-    def setUp(self):
-        self.tmp_transformations: typing.IO = tempfile.NamedTemporaryFile()
+    def setUp(self) -> None:
+        self.tmp_transformations = tempfile.NamedTemporaryFile()
         self.tmp_transformations.write(bytes(TRANSFORMATIONS))
         self.tmp_transformations.seek(0)
 
@@ -69,21 +71,26 @@ class TestInput(unittest.TestCase):
 
         return super().setUp()
 
-    def test_read_transformations(self):
+    def test_read_transformations(self) -> None:
+        """Reader should filter variables and return only selected fields.
+
+        Filtering should be dependent on version passed to Cleaner instance.
+        """
         reader = self.cleaner.read_transformations()
         result = next(reader)
         expected = {
             "input": ("test-study", "test-dataset", "var1"),
             "output": ("test-study", "test-dataset", "var2"),
         }
-        self.assertSequenceEqual(expected, result)
+        self.assertDictEqual(expected, result)
         filtered = {
             "input": ("test-study", "test-dataset", "var5"),
             "output": ("test-study", "test-dataset", "var6"),
         }
         self.assertNotIn(filtered, list(reader))
 
-    def test_read_variables(self):
+    def test_read_variables(self) -> None:
+        """Should give a similar output as the transformations reader."""
         reader = self.cleaner.read_variables()
         result = next(reader)
         self.assertTupleEqual(("test-study", "test-dataset", "var1"), result)
@@ -94,9 +101,9 @@ class TestInput(unittest.TestCase):
         "transformations_cleaner.transformations_cleaner.Cleaner.read_transformations",
         new_callable=MagicMock,
     )
-    def test_get_graph(self, mocked_read: MagicMock):
+    def test_get_graph(self, mocked_read: MagicMock) -> None:
+        """Relationships should be loaded, transitive relations added."""
         mocked_read.return_value = self.mocked_relations
-        path = "/test/test.csv"
         graph = self.cleaner.get_graph()
         self.assertIsInstance(graph, DiGraph)
         mocked_read.assert_called()
@@ -110,6 +117,6 @@ class TestInput(unittest.TestCase):
             graph[self.mocked_relations[0]["input"]],
         )
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         self.tmp_transformations.close()
         return super().tearDown()

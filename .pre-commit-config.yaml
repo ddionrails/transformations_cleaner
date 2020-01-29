@@ -4,6 +4,7 @@ repos:
       - id: pylint
         name: run pylint
         entry: pylint --rcfile=setup.cfg
+        args: ["--disable=bad-continuation"]
         language: system
         files: ".*.py"
         pass_filenames: true

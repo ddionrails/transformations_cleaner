@@ -1,4 +1,7 @@
+"""Contains Cleaner class to clean up generations files."""
+
 from pathlib import Path
+from typing import Dict, Generator, Tuple
 
 import pandas
 from networkx import DiGraph
@@ -6,19 +9,23 @@ from networkx.algorithms import transitive_closure
 
 
 class Cleaner:
+    """Clean out non valid variables from a generations relation file."""
 
     graph: DiGraph
     transformations_path: Path
     version: str
 
-    def __init__(self, transformations_path, variables_path, version):
+    def __init__(
+        self, transformations_path: Path, variables_path: Path, version: str
+    ) -> None:
         self.transformations_path = transformations_path
         self.variables_path = variables_path
         self.version = version
         self.graph = self.get_graph()
         super().__init__()
 
-    def get_graph(self):
+    def get_graph(self) -> DiGraph:
+        """Load transformation content into a network graph."""
         transformations = self.read_transformations()
         graph = DiGraph()
 
@@ -27,7 +34,10 @@ class Cleaner:
 
         return transitive_closure(graph)
 
-    def read_transformations(self):
+    def read_transformations(
+        self,
+    ) -> Generator[Dict[str, Tuple[str, str, str]], None, None]:
+        """Parse generations/transformations.csv to workable format."""
         path = self.transformations_path
         with open(path, "r", encoding="utf-8") as file:
             reader = pandas.read_csv(file, header="infer", iterator=True, chunksize=1)
@@ -46,7 +56,8 @@ class Cleaner:
                         ),
                     }
 
-    def read_variables(self):
+    def read_variables(self) -> Generator[Tuple[str, str, str], None, None]:
+        """Parse variable.csv to workable format."""
         path = self.variables_path
         with open(path, "r", encoding="utf-8") as file:
             reader = pandas.read_csv(file, header="infer", iterator=True, chunksize=1)
@@ -56,4 +67,3 @@ class Cleaner:
                     line["dataset_name"].item(),
                     line["variable_name"].item(),
                 )
-
