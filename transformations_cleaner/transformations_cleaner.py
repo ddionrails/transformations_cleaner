@@ -9,10 +9,12 @@ class Cleaner:
 
     graph: DiGraph
     transformations_path: Path
+    version: str
 
-    def __init__(self, transformations_path, variables_path):
+    def __init__(self, transformations_path, variables_path, version):
         self.transformations_path = transformations_path
         self.variables_path = variables_path
+        self.version = version
         self.graph = self.get_graph()
         super().__init__()
 
@@ -30,18 +32,19 @@ class Cleaner:
         with open(path, "r", encoding="utf-8") as file:
             reader = pandas.read_csv(file, header="infer", iterator=True, chunksize=1)
             for line in reader:
-                yield {
-                    "input": (
-                        line["input_study_name"].item(),
-                        line["input_dataset_name"].item(),
-                        line["input_variable_name"].item(),
-                    ),
-                    "output": (
-                        line["output_study_name"].item(),
-                        line["output_dataset_name"].item(),
-                        line["output_variable_name"].item(),
-                    ),
-                }
+                if line["output_version"].item() == self.version:
+                    yield {
+                        "input": (
+                            line["input_study"].item(),
+                            line["input_dataset"].item(),
+                            line["input_variable"].item(),
+                        ),
+                        "output": (
+                            line["output_study"].item(),
+                            line["output_dataset"].item(),
+                            line["output_variable"].item(),
+                        ),
+                    }
 
     def read_variables(self):
         path = self.variables_path

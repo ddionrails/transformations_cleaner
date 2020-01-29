@@ -10,17 +10,17 @@ from transformations_cleaner.transformations_cleaner import Cleaner
 
 TRANSFORMATIONS = (
     (
-        b"input_study_name,input_dataset_name,input_variable_name,"
-        b"output_study_name,output_dataset_name,output_variable_name"
+        b"input_study,input_dataset,input_version,input_variable,"
+        b"output_study,output_dataset,output_version,output_variable"
     )
     + b"""
-test-study,test-dataset,var1,test-study,test-dataset,var2
-test-study,test-dataset,var1,test-study,test-dataset,var3
-test-study,test-dataset,var2,test-study,test-dataset,var4
-test-study,test-dataset,var3,test-study,test-dataset,var5
-test-study,test-dataset,vartransformations_pathst-study,test-dataset,var6
-test-study,test-dataset,var10,test-study,test-dataset,var11
-test-study,test-dataset,var11,test-study,test-dataset,var12
+test-study,test-dataset,v32,var1,test-study,test-dataset,v34,var2
+test-study,test-dataset,v32,var1,test-study,test-dataset,v34,var3
+test-study,test-dataset,v32,var2,test-study,test-dataset,v34,var4
+test-study,test-dataset,v32,var3,test-study,test-dataset,v34,var5
+test-study,test-dataset,v32,var5,test-study,test-dataset,v33,var6
+test-study,test-dataset,v32,var10,test-study,test-dataset,v34,var11
+test-study,test-dataset,v32,var11,test-study,test-dataset,v34,var12
 """
 )
 
@@ -64,17 +64,24 @@ class TestInput(unittest.TestCase):
         self.cleaner = Cleaner(
             transformations_path=Path(self.tmp_transformations.name),
             variables_path=Path(self.tmp_variables.name),
+            version="v34",
         )
 
         return super().setUp()
 
     def test_read_transformations(self):
-        result = next(self.cleaner.read_transformations())
+        reader = self.cleaner.read_transformations()
+        result = next(reader)
         expected = {
             "input": ("test-study", "test-dataset", "var1"),
             "output": ("test-study", "test-dataset", "var2"),
         }
         self.assertSequenceEqual(expected, result)
+        filtered = {
+            "input": ("test-study", "test-dataset", "var5"),
+            "output": ("test-study", "test-dataset", "var6"),
+        }
+        self.assertNotIn(filtered, list(reader))
 
     def test_read_variables(self):
         reader = self.cleaner.read_variables()
