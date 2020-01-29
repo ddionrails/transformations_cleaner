@@ -8,6 +8,10 @@ pytest = "*"
 mypy = "*"
 bandit = "*"
 black = "*"
+pyroma = "*"
+pylint = "*"
+pre-commit = "*"
+pytest-cov = "*"
 
 [packages]
 networkx = "*"
