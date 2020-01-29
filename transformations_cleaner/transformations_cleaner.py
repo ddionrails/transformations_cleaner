@@ -43,3 +43,14 @@ class Cleaner:
                     ),
                 }
 
+    def read_variables(self):
+        path = self.variables_path
+        with open(path, "r", encoding="utf-8") as file:
+            reader = pandas.read_csv(file, header="infer", iterator=True, chunksize=1)
+            for line in reader:
+                yield (
+                    line["study_name"].item(),
+                    line["dataset_name"].item(),
+                    line["variable_name"].item(),
+                )
+

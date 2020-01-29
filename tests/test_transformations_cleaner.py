@@ -76,6 +76,13 @@ class TestInput(unittest.TestCase):
         }
         self.assertSequenceEqual(expected, result)
 
+    def test_read_variables(self):
+        reader = self.cleaner.read_variables()
+        result = next(reader)
+        self.assertTupleEqual(("test-study", "test-dataset", "var1"), result)
+        result = next(reader)
+        self.assertTupleEqual(("test-study", "test-dataset", "var2"), result)
+
     @patch(
         "transformations_cleaner.transformations_cleaner.Cleaner.read_transformations",
         new_callable=MagicMock,
