@@ -14,4 +14,4 @@ script:
   - pyroma .
   - pylint --rcfile=setup.cfg transformations_cleaner tests
   - mypy --ignore-missing-imports --strict transformations_cleaner
-  - pytest -rf --cov
+  - pytest -rf --cov=transformations_cleaner

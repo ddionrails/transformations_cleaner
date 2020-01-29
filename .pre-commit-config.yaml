@@ -33,3 +33,10 @@ repos:
         language: system
         files: ".*.py"
         pass_filenames: true
+      - id: pytest
+        name: unittest
+        entry: pytest
+        args: ["-rf", "--cov=transformations_cleaner"]
+        language: system
+        files: ".*.py"
+        pass_filenames: false
