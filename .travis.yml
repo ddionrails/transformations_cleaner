@@ -8,10 +8,6 @@ before_install:
   - pipenv lock -r  >> Requirements.txt
 install:
   - pip install -r Requirements.txt
+  - pre-commit install
 script:
-  - isort -c
-  - black --check --line-length=90 --target-version=py36 .
-  - pyroma .
-  - pylint --rcfile=setup.cfg transformations_cleaner tests
-  - mypy --ignore-missing-imports --strict transformations_cleaner
-  - pytest -rf --cov=transformations_cleaner
+  - pre-commit run -a

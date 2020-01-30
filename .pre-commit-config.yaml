@@ -36,7 +36,18 @@ repos:
       - id: pytest
         name: unittest
         entry: pytest
-        args: ["-rf", "--cov=transformations_cleaner"]
+        args:
+          [
+            "-rf",
+            "--cov=transformations_cleaner",
+            "--cov-report",
+            "xml:.cov_report/coverage.xml",
+            "--cov-report",
+            "term",
+            "--cov-report",
+            "term-missing",
+            "--cov=transformations_cleaner",
+          ]
         language: system
         files: ".*.py"
         pass_filenames: false
