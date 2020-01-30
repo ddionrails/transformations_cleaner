@@ -6,7 +6,9 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from networkx import DiGraph
+from typer.testing import CliRunner
 
+from transformations_cleaner.__main__ import CLI
 from transformations_cleaner.transformations_cleaner import Cleaner
 
 TRANSFORMATIONS = (
@@ -120,3 +122,27 @@ class TestCleaner(unittest.TestCase):
     def tearDown(self) -> None:
         self.tmp_transformations.close()
         return super().tearDown()
+
+
+class TestCLI(unittest.TestCase):
+    """Test for the cli."""
+
+    def test_cli(self) -> None:
+        """Does the cli take the desired options?"""
+        runner = CliRunner()
+        result = runner.invoke(CLI, ["--help"])
+
+        self.assertIn("Create a cleaned up transformations file.", result.output)
+        result = runner.invoke(CLI, ["v34"])
+        result = runner.invoke(
+            CLI,
+            [
+                "v34",
+                "--generations-file",
+                "./test/gen.csv",
+                "--variables-file",
+                "./test/var.csv",
+                "--transformations-path",
+                "./test_out/",
+            ],
+        )

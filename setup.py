@@ -11,10 +11,10 @@ setup(
     author_email="dhansen@diw.de",
     python_requires=">=3.6.0",
     packages=find_packages(),
-    install_requires=["pandas >= 0.25.0", "networkx >= 2.4"],
+    install_requires=["pandas >= 0.25.0", "networkx >= 2.4", "typer==0.0.8"],
     entry_points={
         "console_scripts": [
-            "clean_transformations = transformations_cleaner.__main__:main"
+            "clean_transformations = transformations_cleaner.__main__:CLI"
         ]
     },
     license="BSD 3-Clause",
