@@ -14,8 +14,7 @@ pre-commit = "*"
 pytest-cov = "*"
 
 [packages]
-networkx = "*"
-pandas = "*"
+transformations-cleaner = {path = "."}
 
 [requires]
 python_version = "3.6"
