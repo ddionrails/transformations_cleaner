@@ -10,4 +10,4 @@ install:
   - pip install -r Requirements.txt
   - pre-commit install
 script:
-  - pre-commit run -a
+  - pre-commit run -a -v
