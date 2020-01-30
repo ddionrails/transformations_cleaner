@@ -66,7 +66,7 @@ class TestCleaner(unittest.TestCase):
         self.tmp_variables.seek(0)
 
         self.cleaner = Cleaner(
-            transformations_path=Path(self.tmp_transformations.name),
+            generations_path=Path(self.tmp_transformations.name),
             variables_path=Path(self.tmp_variables.name),
             version="v34",
         )
@@ -85,11 +85,18 @@ class TestCleaner(unittest.TestCase):
             "output": ("test-study", "test-dataset", "var2"),
         }
         self.assertDictEqual(expected, result)
-        filtered = {
-            "input": ("test-study", "test-dataset", "var5"),
-            "output": ("test-study", "test-dataset", "var6"),
-        }
-        self.assertNotIn(filtered, list(reader))
+
+    def test_filter_variables(self) -> None:
+        """Intermediate Variables should be filtered out by this function.
+
+        Intermediate Variables are those, that are of the wrong version
+        or that are not found in the variables.csv
+        """
+        graph = self.cleaner.get_graph()
+        expected = ("test-study", "test-dataset", "var6")
+        self.assertIn(expected, graph)
+        result = self.cleaner.filter_variables()
+        self.assertNotIn(expected, result)
 
     def test_read_variables(self) -> None:
         """Should give a similar output as the transformations reader."""
